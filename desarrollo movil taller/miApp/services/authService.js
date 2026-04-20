@@ -1,31 +1,19 @@
-import { auth } from './firebase.js';
-
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
+import { auth } from './firebase';
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
-} from "firebase/auth";
+} from 'firebase/auth';
 
 export const authService = {
+  register: (email, password) => createUserWithEmailAndPassword(auth, email, password),
 
-  register: (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password);
-  },
+  login: (email, password) => signInWithEmailAndPassword(auth, email, password),
 
-  login: (email, password) => {
-    return signInWithEmailAndPassword(auth, email, password);
-  },
+  logout: () => signOut(auth),
 
-  logout: () => {
-    return signOut(auth);
-  },
+  subscribeToAuthState: (callback) => onAuthStateChanged(auth, callback),
 
-  subscribeToAuthState: (callback) => {
-    return onAuthStateChanged(auth, callback);
-  },
-
-  getCurrentUser: () => {
-    return auth.currentUser;
-  }
+  getCurrentUser: () => auth.currentUser,
 };

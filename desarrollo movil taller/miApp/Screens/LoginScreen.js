@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity,
-  StyleSheet, KeyboardAvoidingView, Platform,
-  ActivityIndicator, Alert,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { authService } from '../services/authService';
+import { mapFirebaseError } from '../services/firebase';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -13,15 +19,15 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
-      Alert.alert('Campos requeridos', 'Por favor ingresa tu correo y contraseña.');
+      Alert.alert('Campos requeridos', 'Por favor ingresa tu correo y contrasena.');
       return;
     }
+
     setLoading(true);
     try {
       await authService.login(email.trim(), password);
-      // La navegación la maneja App.js al detectar el cambio de estado
     } catch (error) {
-      Alert.alert('Error al iniciar sesión', error.message);
+      Alert.alert('Error al iniciar sesion', mapFirebaseError(error, error.message));
     } finally {
       setLoading(false);
     }
@@ -32,12 +38,12 @@ export default function LoginScreen({ navigation }) {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <Text style={styles.title}>Mis Hábitos</Text>
-      <Text style={styles.subtitle}>Inicia sesión para continuar</Text>
+      <Text style={styles.title}>Mis Habitos</Text>
+      <Text style={styles.subtitle}>Inicia sesion para continuar</Text>
 
       <TextInput
         style={styles.input}
-        placeholder="Correo electrónico"
+        placeholder="Correo electronico"
         placeholderTextColor="#999"
         value={email}
         onChangeText={setEmail}
@@ -46,7 +52,7 @@ export default function LoginScreen({ navigation }) {
       />
       <TextInput
         style={styles.input}
-        placeholder="Contraseña"
+        placeholder="Contrasena"
         placeholderTextColor="#999"
         value={password}
         onChangeText={setPassword}
@@ -57,12 +63,14 @@ export default function LoginScreen({ navigation }) {
         {loading ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={styles.buttonText}>Iniciar Sesión</Text>
+          <Text style={styles.buttonText}>Iniciar Sesion</Text>
         )}
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-        <Text style={styles.link}>¿No tienes cuenta? <Text style={styles.linkBold}>Regístrate</Text></Text>
+        <Text style={styles.link}>
+          No tienes cuenta? <Text style={styles.linkBold}>Registrate</Text>
+        </Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>
   );
@@ -70,29 +78,50 @@ export default function LoginScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, backgroundColor: '#F0F7FF',
-    justifyContent: 'center', paddingHorizontal: 28,
+    flex: 1,
+    backgroundColor: '#F0F7FF',
+    justifyContent: 'center',
+    paddingHorizontal: 28,
   },
   title: {
-    fontSize: 36, fontWeight: '800', color: '#1A73E8',
-    textAlign: 'center', marginBottom: 6,
+    fontSize: 36,
+    fontWeight: '800',
+    color: '#1A73E8',
+    textAlign: 'center',
+    marginBottom: 6,
   },
   subtitle: {
-    fontSize: 15, color: '#666', textAlign: 'center', marginBottom: 32,
+    fontSize: 15,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 32,
   },
   input: {
-    backgroundColor: '#fff', borderRadius: 12, padding: 14,
-    fontSize: 15, color: '#333', marginBottom: 14,
-    borderWidth: 1, borderColor: '#D0E4FF',
-    shadowColor: '#1A73E8', shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 }, shadowRadius: 4,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 14,
+    fontSize: 15,
+    color: '#333',
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#D0E4FF',
+    shadowColor: '#1A73E8',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
     elevation: 1,
   },
   button: {
-    backgroundColor: '#1A73E8', borderRadius: 12,
-    padding: 16, alignItems: 'center', marginTop: 4, marginBottom: 20,
-    shadowColor: '#1A73E8', shadowOpacity: 0.3,
-    shadowOffset: { width: 0, height: 4 }, shadowRadius: 8,
+    backgroundColor: '#1A73E8',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    marginTop: 4,
+    marginBottom: 20,
+    shadowColor: '#1A73E8',
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
     elevation: 4,
   },
   buttonText: { color: '#fff', fontWeight: '700', fontSize: 16 },
